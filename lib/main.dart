@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,66 +30,98 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  
+  int time = 0;
+  Timer _timer;
 
-  void _incrementCounter() {
+  void _startTimer() {
+    if(_timer == null || !_timer.isActive) {
+      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+        setState(() {
+          time += 1;
+        });
+      });
+    }
+  }
+
+  void _stopTimer() {
+    if(_timer != null) {
+      _timer.cancel();
+    }
+  }
+
+  void _refreshTimer() {
+    _stopTimer();
     setState(() {
-      _counter++;
+      time = 0;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+   
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset(
-                'images/image-accueil.jpg'
+            Container(
+              margin: EdgeInsets.only(bottom: 25.0),
+              child: Text(
+                '$time',
+                style: Theme.of(context).textTheme.headline4,
+              ),
             ),
-            Text(
-              '',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(10.0),
+                  child: Ink(
+                    decoration: const ShapeDecoration(
+                      shape: CircleBorder(side: BorderSide(color: Colors.black)), 
+                      color: Colors.white
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.play_arrow), 
+                      onPressed: _startTimer
+                      )
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(10.0),
+                  child: Ink(
+                    decoration: const ShapeDecoration(
+                      shape: CircleBorder(side: BorderSide(color: Colors.black)), 
+                      color: Colors.white
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.pause), 
+                      onPressed: _stopTimer
+                      ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(10.0),
+                  child: Ink(
+                    decoration: const ShapeDecoration(
+                      shape: CircleBorder(side: BorderSide(color: Colors.black)), 
+                      color: Colors.white
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.refresh), 
+                      onPressed: _refreshTimer
+                      )
+                  ),
+                ),
+              ],
+            )           
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), 
     );
   }
 }
