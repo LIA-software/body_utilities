@@ -1,127 +1,84 @@
+import 'package:body_utilities/screens/ActiviteScreen.dart';
+import 'package:body_utilities/screens/ChronometreScreen.dart';
+import 'package:body_utilities/screens/SeanceScreen.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
+
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red,
         primaryColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Body Utilities'),
+      home: Menu(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
+class Menu extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MenuState createState() => _MenuState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  
-  int time = 0;
-  Timer _timer;
+class _MenuState extends State<Menu> {
 
-  void _startTimer() {
-    if(_timer == null || !_timer.isActive) {
-      _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          time += 1;
-        });
-      });
-    }
-  }
+  int _currentIndex = 0;
 
-  void _stopTimer() {
-    if(_timer != null) {
-      _timer.cancel();
-    }
-  }
+  final _screens = [
+    ChronometreScreen(),
+    SeanceScreen(),
+    ActiviteScreen()
+  ];
 
-  void _refreshTimer() {
-    _stopTimer();
-    setState(() {
-      time = 0;
-    });
-  }
+  final _titles = [
+    "Chronomètre",
+    "Mes Séances",
+    "Activité"
+  ];
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(_titles[_currentIndex]),
+        elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(bottom: 25.0),
-              child: Text(
-                '$time',
-                style: Theme.of(context).textTheme.headline4,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: Ink(
-                    decoration: const ShapeDecoration(
-                      shape: CircleBorder(side: BorderSide(color: Colors.black)), 
-                      color: Colors.white
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.play_arrow), 
-                      onPressed: _startTimer
-                      )
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: Ink(
-                    decoration: const ShapeDecoration(
-                      shape: CircleBorder(side: BorderSide(color: Colors.black)), 
-                      color: Colors.white
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.pause), 
-                      onPressed: _stopTimer
-                      ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.all(10.0),
-                  child: Ink(
-                    decoration: const ShapeDecoration(
-                      shape: CircleBorder(side: BorderSide(color: Colors.black)), 
-                      color: Colors.white
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.refresh), 
-                      onPressed: _refreshTimer
-                      )
-                  ),
-                ),
-              ],
-            )           
-          ],
-        ),
-      ), 
+      body: _screens[_currentIndex],
+      backgroundColor: Colors.white,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        backgroundColor: Colors.grey[200],
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        iconSize: 30,
+        selectedItemColor: Colors.blue[800],
+        unselectedItemColor: Colors.grey[600],
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.timer),
+            title: Text('Chronomètre'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            title: Text('Mes Séances')
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insert_chart),
+            title: Text('Activité')
+          )
+        ],
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
     );
   }
 }
